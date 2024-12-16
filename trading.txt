@@ -1,0 +1,522 @@
+//@version=5
+indicator(title='COIN LRC TARAMA', shorttitle='COINTARAMA', overlay=true)
+///
+grupSec = input.string(defval='1', options=['1', '2', '3', '4', '5','6','7','8','9','10','ÖZEL LİSTE'], group='Taraması yapılacak 40\'arlı gruplardan birini seçin', title='Grup seç')
+per = input.timeframe('D', title='TARAMA ZAMAN DİLİMİ',group = "Tarama yapmak istediğiniz periyodu belirler")
+gerikontrol=input(20, title='TARANACAK BAR SAYISI', group= "Geriye doğru taranacak bar sayısını")
+
+
+///LINEAR REGRESSION CHANNEL KESİŞMESİ İÇİN
+//--------------------------------------------------------------------------------------------------
+lrcShowLRC = input.bool(true, "LRC GÖSTER?", group = "LRC KESİŞME GİRDİLERİ")
+lrcLenHigh =input(300,"high")
+lrcLenLow =input(300,"low")
+
+
+lrcHighReg = ta.linreg(high, lrcLenHigh, 0)
+lrcLowReg = ta.linreg(low,lrcLenLow,0)
+lrcUpperReg = ta.dev(high,lrcLenHigh) + lrcHighReg
+lrcLowerDev = -ta.dev(low,lrcLenLow) + lrcLowReg
+
+if lrcShowLRC
+    if ta.crossover(lrcHighReg, lrcLowReg)
+        label.new(bar_index, low * 0.98, text="KESİŞME", color = color.orange, textcolor = color.white, style=label.style_label_up, size = size.tiny)
+
+    if ta.crossunder(lrcHighReg, lrcLowReg)
+        label.new(bar_index, low * 0.98, text="KESİŞME", color = color.green, textcolor = color.white, style=label.style_label_up, size = size.tiny)
+
+
+plot(lrcShowLRC ? lrcHighReg : na, color=color.new(color.blue, 0),  linewidth = 2, title = "LRC ORTA ÜST")
+plot(lrcShowLRC ? lrcLowReg : na, color=color.new(color.red, 0),  linewidth = 2, title = "LRC ORTA ALT")
+plot(lrcShowLRC ? lrcUpperReg : na, color=lrcUpperReg > lrcUpperReg[1] ? color.new(color.green, 0) : color.new(color.red, 0), linewidth = 2, title = "LRC KANAL ÜST")
+plot(lrcShowLRC ? lrcLowerDev : na, color=lrcLowerDev > lrcLowerDev[1]  ? color.new(color.green, 0) : color.new(color.red, 0), linewidth = 2, title = "LRC KANAL ALT")
+
+kes1=ta.cross(lrcHighReg,lrcLowReg)
+kes2=ta.cross(lrcLowReg,lrcHighReg)
+
+condition=ta.barssince(kes1 or kes2) < gerikontrol
+
+// Define the function for your conditions
+func() =>
+    //ÖRNEK BİR FONKSİYON AŞAĞIDA YAZILMIŞTIR. SİZ DE İSTEDİĞİNİZ KOŞULLAR İÇİN TARAMA YAZABİLİRSİNİZ.
+
+    cond = condition
+    [close,cond]
+
+// Input for custom BIST stock symbols
+sb1 = input.symbol(title='1', defval='BIST:AKBNK', group="╠═════════════ ÖZEL LİSTE ═════════════╣")
+sb2 = input.symbol(title='2', defval='BIST:ASELS')
+sb3 = input.symbol(title='3', defval='BIST:THYAO')
+sb4 = input.symbol(title='4', defval='BIST:GARAN')
+sb5 = input.symbol(title='5', defval='BIST:ISCTR')
+sb6 = input.symbol(title='6', defval='BIST:VAKBN')
+sb7 = input.symbol(title='7', defval='BIST:PETKM')
+sb8 = input.symbol(title='8', defval='BIST:KRDMD')
+sb9 = input.symbol(title='9', defval='BIST:HEKTS')
+sb10 = input.symbol(title='10', defval='BIST:SISE')
+sb11 = input.symbol(title='11', defval='BIST:THYAO')
+sb12 = input.symbol(title='12', defval='BIST:KCHOL')
+sb13 = input.symbol(title='13', defval='BIST:ALBRK')
+sb14 = input.symbol(title='14', defval='BIST:ALYAG')
+sb15 = input.symbol(title='15', defval='BIST:ARCLK')
+sb16 = input.symbol(title='16', defval='BIST:ASELS')
+sb17 = input.symbol(title='17', defval='BIST:AYGAZ')
+sb18 = input.symbol(title='18', defval='BIST:BIMAS')
+sb19 = input.symbol(title='19', defval='BIST:CCOLA')
+sb20 = input.symbol(title='20', defval='BIST:DOHOL')
+sb21 = input.symbol(title='21', defval='BIST:EREGL')
+sb22 = input.symbol(title='22', defval='BIST:ENKAI')
+sb23 = input.symbol(title='23', defval='BIST:FLAP')
+sb24 = input.symbol(title='24', defval='BIST:GLYHO')
+sb25 = input.symbol(title='25', defval='BIST:GOODY')
+sb26 = input.symbol(title='26', defval='BIST:KARSN')
+sb27 = input.symbol(title='27', defval='BIST:KCHOL')
+sb28 = input.symbol(title='28', defval='BIST:KORDS')
+sb29 = input.symbol(title='29', defval='BIST:KOZAL')
+sb30 = input.symbol(title='30', defval='BIST:MGROS')
+sb31 = input.symbol(title='31', defval='BIST:MRSHL')
+sb32 = input.symbol(title='32', defval='BIST:ODAS')
+sb33 = input.symbol(title='33', defval='BIST:PGSUS')
+sb34 = input.symbol(title='34', defval='BIST:SAHOL')
+sb35 = input.symbol(title='35', defval='BIST:SKTAS')
+sb36 = input.symbol(title='36', defval='BIST:TRKCM')
+sb37 = input.symbol(title='37', defval='BIST:ULKER')
+sb38 = input.symbol(title='38', defval='BIST:VESTL')
+sb39 = input.symbol(title='39', defval='BIST:YATAS')
+sb40 = input.symbol(title='40', defval='BIST:ZOREN')
+sb41 = input.symbol(title='41', defval='BIST:AKGRT')
+sb42 = input.symbol(title='42', defval='BIST:ALYAG')
+sb43 = input.symbol(title='43', defval='BIST:ARCLK')
+sb44 = input.symbol(title='44', defval='BIST:ASELS')
+sb45 = input.symbol(title='45', defval='BIST:AYGAZ')
+sb46 = input.symbol(title='46', defval='BIST:BIMAS')
+sb47 = input.symbol(title='47', defval='BIST:CCOLA')
+sb48 = input.symbol(title='48', defval='BIST:DOHOL')
+sb49 = input.symbol(title='49', defval='BIST:EREGL')
+sb50 = input.symbol(title='50', defval='BIST:ENKAI')
+sb51 = input.symbol(title='51', defval='BIST:FLAP')
+sb52 = input.symbol(title='52', defval='BIST:GLYHO')
+sb53 = input.symbol(title='53', defval='BIST:GOODY')
+sb54 = input.symbol(title='54', defval='BIST:KARSN')
+sb55 = input.symbol(title='55', defval='BIST:KCHOL')
+sb56 = input.symbol(title='56', defval='BIST:KORDS')
+sb57 = input.symbol(title='57', defval='BIST:KOZAL')
+sb58 = input.symbol(title='58', defval='BIST:MGROS')
+sb59 = input.symbol(title='59', defval='BIST:MRSHL')
+sb60 = input.symbol(title='60', defval='BIST:ODAS')
+sb61 = input.symbol(title='61', defval='BIST:PGSUS')
+sb62 = input.symbol(title='62', defval='BIST:SAHOL')
+sb63 = input.symbol(title='63', defval='BIST:SKTAS')
+sb64 = input.symbol(title='64', defval='BIST:TRKCM')
+sb65 = input.symbol(title='65', defval='BIST:ULKER')
+sb66 = input.symbol(title='66', defval='BIST:VESTL')
+sb67 = input.symbol(title='67', defval='BIST:YATAS')
+sb68 = input.symbol(title='68', defval='BIST:ZOREN')
+sb69 = input.symbol(title='69', defval='BIST:AKGRT')
+sb70 = input.symbol(title='70', defval='BIST:ALYAG')
+sb71 = input.symbol(title='71', defval='BIST:ARCLK')
+sb72 = input.symbol(title='72', defval='BIST:ASELS')
+sb73 = input.symbol(title='73', defval='BIST:AYGAZ')
+sb74 = input.symbol(title='74', defval='BIST:BIMAS')
+sb75 = input.symbol(title='75', defval='BIST:CCOLA')
+sb76 = input.symbol(title='76', defval='BIST:DOHOL')
+sb77 = input.symbol(title='77', defval='BIST:EREGL')
+sb78 = input.symbol(title='78', defval='BIST:ENKAI')
+sb79 = input.symbol(title='79', defval='BIST:FLAP')
+sb80 = input.symbol(title='80', defval='BIST:GLYHO')
+sb81 = input.symbol(title='81', defval='BIST:GOODY')
+sb82 = input.symbol(title='82', defval='BIST:KARSN')
+sb83 = input.symbol(title='83', defval='BIST:KCHOL')
+sb84 = input.symbol(title='84', defval='BIST:KORDS')
+sb85 = input.symbol(title='85', defval='BIST:KOZAL')
+sb86 = input.symbol(title='86', defval='BIST:MGROS')
+sb87 = input.symbol(title='87', defval='BIST:MRSHL')
+sb88 = input.symbol(title='88', defval='BIST:ODAS')
+sb89 = input.symbol(title='89', defval='BIST:PGSUS')
+sb90 = input.symbol(title='90', defval='BIST:SAHOL')
+sb91 = input.symbol(title='91', defval='BIST:SKTAS')
+sb92 = input.symbol(title='92', defval='BIST:TRKCM')
+sb93 = input.symbol(title='93', defval='BIST:ULKER')
+sb94 = input.symbol(title='94', defval='BIST:VESTL')
+sb95 = input.symbol(title='95', defval='BIST:YATAS')
+sb96 = input.symbol(title='96', defval='BIST:ZOREN')
+sb97 = input.symbol(title='97', defval='BIST:AKGRT')
+sb98 = input.symbol(title='98', defval='BIST:ALYAG')
+sb99 = input.symbol(title='99', defval='BIST:ARCLK')
+sb100 = input.symbol(title='100', defval='BIST:ASELS')
+sb101 = input.symbol(title='101', defval='BIST:AYGAZ')
+sb102 = input.symbol(title='102', defval='BIST:BIMAS')
+sb103 = input.symbol(title='103', defval='BIST:CCOLA')
+sb104 = input.symbol(title='104', defval='BIST:DOHOL')
+sb105 = input.symbol(title='105', defval='BIST:EREGL')
+sb106 = input.symbol(title='106', defval='BIST:ENKAI')
+sb107 = input.symbol(title='107', defval='BIST:FLAP')
+sb108 = input.symbol(title='108', defval='BIST:GLYHO')
+sb109 = input.symbol(title='109', defval='BIST:GOODY')
+sb110 = input.symbol(title='110', defval='BIST:KARSN')
+sb111 = input.symbol(title='111', defval='BIST:KCHOL')
+sb112 = input.symbol(title='112', defval='BIST:KORDS')
+sb113 = input.symbol(title='113', defval='BIST:KOZAL')
+sb114 = input.symbol(title='114', defval='BIST:MGROS')
+sb115 = input.symbol(title='115', defval='BIST:MRSHL')
+sb116 = input.symbol(title='116', defval='BIST:ODAS')
+sb117 = input.symbol(title='117', defval='BIST:PGSUS')
+sb118 = input.symbol(title='118', defval='BIST:SAHOL')
+sb119 = input.symbol(title='119', defval='BIST:SKTAS')
+sb120 = input.symbol(title='120', defval='BIST:TRKCM')
+sb121 = input.symbol(title='121', defval='BIST:ULKER')
+sb122 = input.symbol(title='122', defval='BIST:VESTL')
+sb123 = input.symbol(title='123', defval='BIST:YATAS')
+sb124 = input.symbol(title='124', defval='BIST:ZOREN')
+sb125 = input.symbol(title='125', defval='BIST:AKGRT')
+sb126 = input.symbol(title='126', defval='BIST:ALYAG')
+sb127 = input.symbol(title='127', defval='BIST:ARCLK')
+sb128 = input.symbol(title='128', defval='BIST:ASELS')
+sb129 = input.symbol(title='129', defval='BIST:AYGAZ')
+sb130 = input.symbol(title='130', defval='BIST:BIMAS')
+sb131 = input.symbol(title='131', defval='BIST:CCOLA')
+sb132 = input.symbol(title='132', defval='BIST:DOHOL')
+sb133 = input.symbol(title='133', defval='BIST:EREGL')
+sb134 = input.symbol(title='134', defval='BIST:ENKAI')
+sb135 = input.symbol(title='135', defval='BIST:FLAP')
+sb136 = input.symbol(title='136', defval='BIST:GLYHO')
+sb137 = input.symbol(title='137', defval='BIST:GOODY')
+sb138 = input.symbol(title='138', defval='BIST:KARSN')
+sb139 = input.symbol(title='139', defval='BIST:KCHOL')
+sb140 = input.symbol(title='140', defval='BIST:KORDS')
+sb141 = input.symbol(title='141', defval='BIST:KOZAL')
+sb142 = input.symbol(title='142', defval='BIST:MGROS')
+sb143 = input.symbol(title='143', defval='BIST:MRSHL')
+sb144 = input.symbol(title='144', defval='BIST:ODAS')
+sb145 = input.symbol(title='145', defval='BIST:PGSUS')
+sb146 = input.symbol(title='146', defval='BIST:SAHOL')
+sb147 = input.symbol(title='147', defval='BIST:SKTAS')
+sb148 = input.symbol(title='148', defval='BIST:TRKCM')
+sb149 = input.symbol(title='149', defval='BIST:ULKER')
+sb150 = input.symbol(title='150', defval='BIST:VESTL')
+
+u1 = grupSec == '1' ? 'BIST:AKBNK' : grupSec == '2' ? 'BIST:ASELS' : grupSec == '3' ? 'BIST:THYAO' : grupSec == '4' ? 'BIST:GARAN' : grupSec == '5' ? 'BIST:ISCTR' : grupSec == '6' ? 'BIST:VAKBN' : grupSec == '7' ? 'BIST:PETKM' : grupSec == '8' ? 'BIST:KRDMD' : grupSec == '9' ? 'BIST:HEKTS' : grupSec == '10' ? 'BIST:SISE' : grupSec == 'ÖZEL LİSTE' ? sb1 : na
+u2 = grupSec == '1' ? 'BIST:KCHOL' : grupSec == '2' ? 'BIST:ALBRK' : grupSec == '3' ? 'BIST:ALYAG' : grupSec == '4' ? 'BIST:ARCLK' : grupSec == '5' ? 'BIST:ASELS' : grupSec == '6' ? 'BIST:AYGAZ' : grupSec == '7' ? 'BIST:BIMAS' : grupSec == '8' ? 'BIST:CCOLA' : grupSec == '9' ? 'BIST:DOHOL' : grupSec == '10' ? 'BIST:EREGL' : grupSec == 'ÖZEL LİSTE' ? sb2 : na
+u3 = grupSec == '1' ? 'BIST:ENKAI' : grupSec == '2' ? 'BIST:FLAP' : grupSec == '3' ? 'BIST:GLYHO' : grupSec == '4' ? 'BIST:GOODY' : grupSec == '5' ? 'BIST:KARSN' : grupSec == '6' ? 'BIST:KCHOL' : grupSec == '7' ? 'BIST:KORDS' : grupSec == '8' ? 'BIST:KOZAL' : grupSec == '9' ? 'BIST:MGROS' : grupSec == '10' ? 'BIST:MRSHL' : grupSec == 'ÖZEL LİSTE' ? sb3 : na
+u4 = grupSec == '1' ? 'BIST:ODAS' : grupSec == '2' ? 'BIST:PGSUS' : grupSec == '3' ? 'BIST:SAHOL' : grupSec == '4' ? 'BIST:SKTAS' : grupSec == '5' ? 'BIST:TRKCM' : grupSec == '6' ? 'BIST:ULKER' : grupSec == '7' ? 'BIST:VESTL' : grupSec == '8' ? 'BIST:YATAS' : grupSec == '9' ? 'BIST:ZOREN' : grupSec == '10' ? 'BIST:AKGRT' : grupSec == 'ÖZEL LİSTE' ? sb4 : na
+u5 = grupSec == '1' ? 'BIST:ALYAG' : grupSec == '2' ? 'BIST:ARCLK' : grupSec == '3' ? 'BIST:ASELS' : grupSec == '4' ? 'BIST:AYGAZ' : grupSec == '5' ? 'BIST:BIMAS' : grupSec == '6' ? 'BIST:CCOLA' : grupSec == '7' ? 'BIST:DOHOL' : grupSec == '8' ? 'BIST:EREGL' : grupSec == '9' ? 'BIST:ENKAI' : grupSec == '10' ? 'BIST:FLAP' : grupSec == 'ÖZEL LİSTE' ? sb5 : na
+u6 = grupSec == '1' ? 'BIST:GLYHO' : grupSec == '2' ? 'BIST:GOODY' : grupSec == '3' ? 'BIST:KARSN' : grupSec == '4' ? 'BIST:KCHOL' : grupSec == '5' ? 'BIST:KORDS' : grupSec == '6' ? 'BIST:KOZAL' : grupSec == '7' ? 'BIST:MGROS' : grupSec == '8' ? 'BIST:MRSHL' : grupSec == '9' ? 'BIST:ODAS' : grupSec == '10' ? 'BIST:PGSUS' : grupSec == 'ÖZEL LİSTE' ? sb6 : na
+u7 = grupSec == '1' ? 'BIST:SAHOL' : grupSec == '2' ? 'BIST:SKTAS' : grupSec == '3' ? 'BIST:TRKCM' : grupSec == '4' ? 'BIST:ULKER' : grupSec == '5' ? 'BIST:VESTL' : grupSec == '6' ? 'BIST:YATAS' : grupSec == '7' ? 'BIST:ZOREN' : grupSec == '8' ? 'BIST:AKGRT' : grupSec == '9' ? 'BIST:ALYAG' : grupSec == '10' ? 'BIST:ARCLK' : grupSec == 'ÖZEL LİSTE' ? sb7 : na
+u8 = grupSec == '1' ? 'BIST:ASELS' : grupSec == '2' ? 'BIST:AYGAZ' : grupSec == '3' ? 'BIST:BIMAS' : grupSec == '4' ? 'BIST:CCOLA' : grupSec == '5' ? 'BIST:DOHOL' : grupSec == '6' ? 'BIST:EREGL' : grupSec == '7' ? 'BIST:ENKAI' : grupSec == '8' ? 'BIST:FLAP' : grupSec == '9' ? 'BIST:GLYHO' : grupSec == '10' ? 'BIST:GOODY' : grupSec == 'ÖZEL LİSTE' ? sb8 : na
+u9 = grupSec == '1' ? 'BIST:KARSN' : grupSec == '2' ? 'BIST:KCHOL' : grupSec == '3' ? 'BIST:KORDS' : grupSec == '4' ? 'BIST:KOZAL' : grupSec == '5' ? 'BIST:MGROS' : grupSec == '6' ? 'BIST:MRSHL' : grupSec == '7' ? 'BIST:ODAS' : grupSec == '8' ? 'BIST:PGSUS' : grupSec == '9' ? 'BIST:SAHOL' : grupSec == '10' ? 'BIST:SKTAS' : grupSec == 'ÖZEL LİSTE' ? sb9 : na
+u10 = grupSec == '1' ? 'BIST:TRKCM' : grupSec == '2' ? 'BIST:ULKER' : grupSec == '3' ? 'BIST:VESTL' : grupSec == '4' ? 'BIST:YATAS' : grupSec == '5' ? 'BIST:ZOREN' : grupSec == '6' ? 'BIST:AKGRT' : grupSec == '7' ? 'BIST:ALYAG' : grupSec == '8' ? 'BIST:ARCLK' : grupSec == '9' ? 'BIST:ASELS' : grupSec == '10' ? 'BIST:AYGAZ' : grupSec == 'ÖZEL LİSTE' ? sb10 : na
+u11 = grupSec == '1' ? 'BIST:BIMAS' : grupSec == '2' ? 'BIST:CCOLA' : grupSec == '3' ? 'BIST:DOHOL' : grupSec == '4' ? 'BIST:EREGL' : grupSec == '5' ? 'BIST:ENKAI' : grupSec == '6' ? 'BIST:FLAP' : grupSec == '7' ? 'BIST:GLYHO' : grupSec == '8' ? 'BIST:GOODY' : grupSec == '9' ? 'BIST:KARSN' : grupSec == '10' ? 'BIST:KCHOL' : grupSec == 'ÖZEL LİSTE' ? sb10 : na
+u12 = grupSec == '1' ? 'BIST:KORDS' : grupSec == '2' ? 'BIST:KOZAL' : grupSec == '3' ? 'BIST:MGROS' : grupSec == '4' ? 'BIST:MRSHL' : grupSec == '5' ? 'BIST:ODAS' : grupSec == '6' ? 'BIST:PGSUS' : grupSec == '7' ? 'BIST:SAHOL' : grupSec == '8' ? 'BIST:SKTAS' : grupSec == '9' ? 'BIST:TRKCM' : grupSec == '10' ? 'BIST:ULKER' : grupSec == 'ÖZEL LİSTE' ? sb10 : na
+u12 = grupSec == '1' ? 'BIST:VESTL' : grupSec == '2' ? 'BIST:VESTL' : grupSec == '3' ? 'BIST:VESTL' : grupSec == '4' ? 'BIST:VESTL' : grupSec == '5' ? 'BIST:VESTL' : grupSec == '6' ? 'BIST:VESTL' : grupSec == '7' ? 'BIST:VESTL' : grupSec == '8' ? 'BIST:VESTL' : grupSec == '9' ? 'BIST:VESTL' : grupSec == '10' ? 'BIST:VESTL' : grupSec == 'ÖZEL LİSTE' ? sb10 : na
+
+
+[v1, s1] = request.security(sb1, 'per', func(), ignore_invalid_symbol=true)
+[v2, s2] = request.security(sb2, 'per', func(), ignore_invalid_symbol=true)
+[v3, s3] = request.security(sb3, 'per', func(), ignore_invalid_symbol=true)
+[v4, s4] = request.security(sb4, 'per', func(), ignore_invalid_symbol=true)
+[v5, s5] = request.security(sb5, 'per', func(), ignore_invalid_symbol=true)
+[v6, s6] = request.security(sb6, 'per', func(), ignore_invalid_symbol=true)
+[v7, s7] = request.security(sb7, 'per', func(), ignore_invalid_symbol=true)
+[v8, s8] = request.security(sb8, 'per', func(), ignore_invalid_symbol=true)
+[v9, s9] = request.security(sb9, 'per', func(), ignore_invalid_symbol=true)
+[v10, s10] = request.security(sb10, 'per', func(), ignore_invalid_symbol=true)
+[v11, s11] = request.security(sb11, 'per', func(), ignore_invalid_symbol=true)
+[v12, s12] = request.security(sb12, 'per', func(), ignore_invalid_symbol=true)
+[v13, s13] = request.security(sb13, 'per', func(), ignore_invalid_symbol=true)
+[v14, s14] = request.security(sb14, 'per', func(), ignore_invalid_symbol=true)
+[v15, s15] = request.security(sb15, 'per', func(), ignore_invalid_symbol=true)
+[v16, s16] = request.security(sb16, 'per', func(), ignore_invalid_symbol=true)
+[v17, s17] = request.security(sb17, 'per', func(), ignore_invalid_symbol=true)
+[v18, s18] = request.security(sb18, 'per', func(), ignore_invalid_symbol=true)
+[v19, s19] = request.security(sb19, 'per', func(), ignore_invalid_symbol=true)
+[v20, s20] = request.security(sb20, 'per', func(), ignore_invalid_symbol=true)
+[v21, s21] = request.security(sb21, 'per', func(), ignore_invalid_symbol=true)
+[v22, s22] = request.security(sb22, 'per', func(), ignore_invalid_symbol=true)
+[v23, s23] = request.security(sb23, 'per', func(), ignore_invalid_symbol=true)
+[v24, s24] = request.security(sb24, 'per', func(), ignore_invalid_symbol=true)
+[v25, s25] = request.security(sb25, 'per', func(), ignore_invalid_symbol=true)
+[v26, s26] = request.security(sb26, 'per', func(), ignore_invalid_symbol=true)
+[v27, s27] = request.security(sb27, 'per', func(), ignore_invalid_symbol=true)
+[v28, s28] = request.security(sb28, 'per', func(), ignore_invalid_symbol=true)
+[v29, s29] = request.security(sb29, 'per', func(), ignore_invalid_symbol=true)
+[v30, s30] = request.security(sb30, 'per', func(), ignore_invalid_symbol=true)
+[v31, s31] = request.security(sb31, 'per', func(), ignore_invalid_symbol=true)
+[v32, s32] = request.security(sb32, 'per', func(), ignore_invalid_symbol=true)
+[v33, s33] = request.security(sb33, 'per', func(), ignore_invalid_symbol=true)
+[v34, s34] = request.security(sb34, 'per', func(), ignore_invalid_symbol=true)
+[v35, s35] = request.security(sb35, 'per', func(), ignore_invalid_symbol=true)
+[v36, s36] = request.security(sb36, 'per', func(), ignore_invalid_symbol=true)
+[v37, s37] = request.security(sb37, 'per', func(), ignore_invalid_symbol=true)
+[v38, s38] = request.security(sb38, 'per', func(), ignore_invalid_symbol=true)
+[v39, s39] = request.security(sb39, 'per', func(), ignore_invalid_symbol=true)
+[v40, s40] = request.security(sb40, 'per', func(), ignore_invalid_symbol=true)
+[v41, s41] = request.security(sb41, 'per', func(), ignore_invalid_symbol=true)
+[v42, s42] = request.security(sb42, 'per', func(), ignore_invalid_symbol=true)
+[v43, s43] = request.security(sb43, 'per', func(), ignore_invalid_symbol=true)
+[v44, s44] = request.security(sb44, 'per', func(), ignore_invalid_symbol=true)
+[v45, s45] = request.security(sb45, 'per', func(), ignore_invalid_symbol=true)
+[v46, s46] = request.security(sb46, 'per', func(), ignore_invalid_symbol=true)
+[v47, s47] = request.security(sb47, 'per', func(), ignore_invalid_symbol=true)
+[v48, s48] = request.security(sb48, 'per', func(), ignore_invalid_symbol=true)
+[v49, s49] = request.security(sb49, 'per', func(), ignore_invalid_symbol=true)
+[v50, s50] = request.security(sb50, 'per', func(), ignore_invalid_symbol=true)
+[v51, s51] = request.security(sb51, 'per', func(), ignore_invalid_symbol=true)
+[v52, s52] = request.security(sb52, 'per', func(), ignore_invalid_symbol=true)
+[v53, s53] = request.security(sb53, 'per', func(), ignore_invalid_symbol=true)
+[v54, s54] = request.security(sb54, 'per', func(), ignore_invalid_symbol=true)
+[v55, s55] = request.security(sb55, 'per', func(), ignore_invalid_symbol=true)
+[v56, s56] = request.security(sb56, 'per', func(), ignore_invalid_symbol=true)
+[v57, s57] = request.security(sb57, 'per', func(), ignore_invalid_symbol=true)
+[v58, s58] = request.security(sb58, 'per', func(), ignore_invalid_symbol=true)
+[v59, s59] = request.security(sb59, 'per', func(), ignore_invalid_symbol=true)
+[v60, s60] = request.security(sb60, 'per', func(), ignore_invalid_symbol=true)
+[v61, s61] = request.security(sb61, 'per', func(), ignore_invalid_symbol=true)
+[v62, s62] = request.security(sb62, 'per', func(), ignore_invalid_symbol=true)
+[v63, s63] = request.security(sb63, 'per', func(), ignore_invalid_symbol=true)
+[v64, s64] = request.security(sb64, 'per', func(), ignore_invalid_symbol=true)
+[v65, s65] = request.security(sb65, 'per', func(), ignore_invalid_symbol=true)
+[v66, s66] = request.security(sb66, 'per', func(), ignore_invalid_symbol=true)
+[v67, s67] = request.security(sb67, 'per', func(), ignore_invalid_symbol=true)
+[v68, s68] = request.security(sb68, 'per', func(), ignore_invalid_symbol=true)
+[v69, s69] = request.security(sb69, 'per', func(), ignore_invalid_symbol=true)
+[v70, s70] = request.security(sb70, 'per', func(), ignore_invalid_symbol=true)
+[v71, s71] = request.security(sb71, 'per', func(), ignore_invalid_symbol=true)
+[v72, s72] = request.security(sb72, 'per', func(), ignore_invalid_symbol=true)
+[v73, s73] = request.security(sb73, 'per', func(), ignore_invalid_symbol=true)
+[v74, s74] = request.security(sb74, 'per', func(), ignore_invalid_symbol=true)
+[v75, s75] = request.security(sb75, 'per', func(), ignore_invalid_symbol=true)
+[v76, s76] = request.security(sb76, 'per', func(), ignore_invalid_symbol=true)
+[v77, s77] = request.security(sb77, 'per', func(), ignore_invalid_symbol=true)
+[v78, s78] = request.security(sb78, 'per', func(), ignore_invalid_symbol=true)
+[v79, s79] = request.security(sb79, 'per', func(), ignore_invalid_symbol=true)
+[v80, s80] = request.security(sb80, 'per', func(), ignore_invalid_symbol=true)
+[v81, s81] = request.security(sb81, 'per', func(), ignore_invalid_symbol=true)
+[v82, s82] = request.security(sb82, 'per', func(), ignore_invalid_symbol=true)
+[v83, s83] = request.security(sb83, 'per', func(), ignore_invalid_symbol=true)
+[v84, s84] = request.security(sb84, 'per', func(), ignore_invalid_symbol=true)
+[v85, s85] = request.security(sb85, 'per', func(), ignore_invalid_symbol=true)
+[v86, s86] = request.security(sb86, 'per', func(), ignore_invalid_symbol=true)
+[v87, s87] = request.security(sb87, 'per', func(), ignore_invalid_symbol=true)
+[v88, s88] = request.security(sb88, 'per', func(), ignore_invalid_symbol=true)
+[v89, s89] = request.security(sb89, 'per', func(), ignore_invalid_symbol=true)
+[v90, s90] = request.security(sb90, 'per', func(), ignore_invalid_symbol=true)
+[v91, s91] = request.security(sb91, 'per', func(), ignore_invalid_symbol=true)
+[v92, s92] = request.security(sb92, 'per', func(), ignore_invalid_symbol=true)
+[v93, s93] = request.security(sb93, 'per', func(), ignore_invalid_symbol=true)
+[v94, s94] = request.security(sb94, 'per', func(), ignore_invalid_symbol=true)
+[v95, s95] = request.security(sb95, 'per', func(), ignore_invalid_symbol=true)
+[v96, s96] = request.security(sb96, 'per', func(), ignore_invalid_symbol=true)
+[v97, s97] = request.security(sb97, 'per', func(), ignore_invalid_symbol=true)
+[v98, s98] = request.security(sb98, 'per', func(), ignore_invalid_symbol=true)
+[v99, s99] = request.security(sb99, 'per', func(), ignore_invalid_symbol=true)
+[v100, s100] = request.security(sb100, 'per', func(), ignore_invalid_symbol=true)
+[v101, s101] = request.security(sb101, 'per', func(), ignore_invalid_symbol=true)
+[v102, s102] = request.security(sb102, 'per', func(), ignore_invalid_symbol=true)
+[v103, s103] = request.security(sb103, 'per', func(), ignore_invalid_symbol=true)
+[v104, s104] = request.security(sb104, 'per', func(), ignore_invalid_symbol=true)
+[v105, s105] = request.security(sb105, 'per', func(), ignore_invalid_symbol=true)
+[v106, s106] = request.security(sb106, 'per', func(), ignore_invalid_symbol=true)
+[v107, s107] = request.security(sb107, 'per', func(), ignore_invalid_symbol=true)
+[v108, s108] = request.security(sb108, 'per', func(), ignore_invalid_symbol=true)
+[v109, s109] = request.security(sb109, 'per', func(), ignore_invalid_symbol=true)
+[v110, s110] = request.security(sb110, 'per', func(), ignore_invalid_symbol=true)
+[v111, s111] = request.security(sb111, 'per', func(), ignore_invalid_symbol=true)
+[v112, s112] = request.security(sb112, 'per', func(), ignore_invalid_symbol=true)
+[v113, s113] = request.security(sb113, 'per', func(), ignore_invalid_symbol=true)
+[v114, s114] = request.security(sb114, 'per', func(), ignore_invalid_symbol=true)
+[v115, s115] = request.security(sb115, 'per', func(), ignore_invalid_symbol=true)
+[v116, s116] = request.security(sb116, 'per', func(), ignore_invalid_symbol=true)
+[v117, s117] = request.security(sb117, 'per', func(), ignore_invalid_symbol=true)
+[v118, s118] = request.security(sb118, 'per', func(), ignore_invalid_symbol=true)
+[v119, s119] = request.security(sb119, 'per', func(), ignore_invalid_symbol=true)
+[v120, s120] = request.security(sb120, 'per', func(), ignore_invalid_symbol=true)
+[v121, s121] = request.security(sb121, 'per', func(), ignore_invalid_symbol=true)
+[v122, s122] = request.security(sb122, 'per', func(), ignore_invalid_symbol=true)
+[v123, s123] = request.security(sb123, 'per', func(), ignore_invalid_symbol=true)
+[v124, s124] = request.security(sb124, 'per', func(), ignore_invalid_symbol=true)
+[v125, s125] = request.security(sb125, 'per', func(), ignore_invalid_symbol=true)
+[v126, s126] = request.security(sb126, 'per', func(), ignore_invalid_symbol=true)
+[v127, s127] = request.security(sb127, 'per', func(), ignore_invalid_symbol=true)
+[v128, s128] = request.security(sb128, 'per', func(), ignore_invalid_symbol=true)
+[v129, s129] = request.security(sb129, 'per', func(), ignore_invalid_symbol=true)
+[v130, s130] = request.security(sb130, 'per', func(), ignore_invalid_symbol=true)
+[v131, s131] = request.security(sb131, 'per', func(), ignore_invalid_symbol=true)
+[v132, s132] = request.security(sb132, 'per', func(), ignore_invalid_symbol=true)
+[v133, s133] = request.security(sb133, 'per', func(), ignore_invalid_symbol=true)
+[v134, s134] = request.security(sb134, 'per', func(), ignore_invalid_symbol=true)
+[v135, s135] = request.security(sb135, 'per', func(), ignore_invalid_symbol=true)
+[v136, s136] = request.security(sb136, 'per', func(), ignore_invalid_symbol=true)
+[v137, s137] = request.security(sb137, 'per', func(), ignore_invalid_symbol=true)
+[v138, s138] = request.security(sb138, 'per', func(), ignore_invalid_symbol=true)
+[v139, s139] = request.security(sb139, 'per', func(), ignore_invalid_symbol=true)
+[v140, s140] = request.security(sb140, 'per', func(), ignore_invalid_symbol=true)
+[v141, s141] = request.security(sb141, 'per', func(), ignore_invalid_symbol=true)
+[v142, s142] = request.security(sb142, 'per', func(), ignore_invalid_symbol=true)
+[v143, s143] = request.security(sb143, 'per', func(), ignore_invalid_symbol=true)
+[v144, s144] = request.security(sb144, 'per', func(), ignore_invalid_symbol=true)
+[v145, s145] = request.security(sb145, 'per', func(), ignore_invalid_symbol=true)
+[v146, s146] = request.security(sb146, 'per', func(), ignore_invalid_symbol=true)
+[v147, s147] = request.security(sb147, 'per', func(), ignore_invalid_symbol=true)
+[v148, s148] = request.security(sb148, 'per', func(), ignore_invalid_symbol=true)
+[v149, s149] = request.security(sb149, 'per', func(), ignore_invalid_symbol=true)
+[v150, s150] = request.security(sb150, 'per', func(), ignore_invalid_symbol=true)
+
+
+scr_label = 'TARAMA\n'
+scr_label := s1 ? scr_label + syminfo.ticker(u1) + ' ' + str.tostring(v1) + '\n' : scr_label
+scr_label := s2 ? scr_label + syminfo.ticker(u2) + ' ' + str.tostring(v2) + '\n' : scr_label
+scr_label := s3 ? scr_label + syminfo.ticker(u3) + ' ' + str.tostring(v3) + '\n' : scr_label
+scr_label := s4 ? scr_label + syminfo.ticker(u4) + ' ' + str.tostring(v4) + '\n' : scr_label
+scr_label := s5 ? scr_label + syminfo.ticker(u5) + ' ' + str.tostring(v5) + '\n' : scr_label
+scr_label := s6 ? scr_label + syminfo.ticker(u6) + ' ' + str.tostring(v6) + '\n' : scr_label
+scr_label := s7 ? scr_label + syminfo.ticker(u7) + ' ' + str.tostring(v7) + '\n' : scr_label
+scr_label := s8 ? scr_label + syminfo.ticker(u8) + ' ' + str.tostring(v8) + '\n' : scr_label
+scr_label := s9 ? scr_label + syminfo.ticker(u9) + ' ' + str.tostring(v9) + '\n' : scr_label
+scr_label := s10 ? scr_label + syminfo.ticker(u10) + ' ' + str.tostring(v10) + '\n' : scr_label
+scr_label := s11 ? scr_label + syminfo.ticker(u11) + ' ' + str.tostring(v11) + '\n' : scr_label
+scr_label := s12 ? scr_label + syminfo.ticker(u12) + ' ' + str.tostring(v12) + '\n' : scr_label
+scr_label := s13 ? scr_label + syminfo.ticker(u13) + ' ' + str.tostring(v13) + '\n' : scr_label
+scr_label := s14 ? scr_label + syminfo.ticker(u14) + ' ' + str.tostring(v14) + '\n' : scr_label
+scr_label := s15 ? scr_label + syminfo.ticker(u15) + ' ' + str.tostring(v15) + '\n' : scr_label
+scr_label := s16 ? scr_label + syminfo.ticker(u16) + ' ' + str.tostring(v16) + '\n' : scr_label
+scr_label := s17 ? scr_label + syminfo.ticker(u17) + ' ' + str.tostring(v17) + '\n' : scr_label
+scr_label := s18 ? scr_label + syminfo.ticker(u18) + ' ' + str.tostring(v18) + '\n' : scr_label
+scr_label := s19 ? scr_label + syminfo.ticker(u19) + ' ' + str.tostring(v19) + '\n' : scr_label
+scr_label := s20 ? scr_label + syminfo.ticker(u20) + ' ' + str.tostring(v20) + '\n' : scr_label
+scr_label := s21 ? scr_label + syminfo.ticker(u21) + ' ' + str.tostring(v21) + '\n' : scr_label
+scr_label := s22 ? scr_label + syminfo.ticker(u22) + ' ' + str.tostring(v22) + '\n' : scr_label
+scr_label := s23 ? scr_label + syminfo.ticker(u23) + ' ' + str.tostring(v23) + '\n' : scr_label
+scr_label := s24 ? scr_label + syminfo.ticker(u24) + ' ' + str.tostring(v24) + '\n' : scr_label
+scr_label := s25 ? scr_label + syminfo.ticker(u25) + ' ' + str.tostring(v25) + '\n' : scr_label
+scr_label := s26 ? scr_label + syminfo.ticker(u26) + ' ' + str.tostring(v26) + '\n' : scr_label
+scr_label := s27 ? scr_label + syminfo.ticker(u27) + ' ' + str.tostring(v27) + '\n' : scr_label
+scr_label := s28 ? scr_label + syminfo.ticker(u28) + ' ' + str.tostring(v28) + '\n' : scr_label
+scr_label := s29 ? scr_label + syminfo.ticker(u29) + ' ' + str.tostring(v29) + '\n' : scr_label
+scr_label := s30 ? scr_label + syminfo.ticker(u30) + ' ' + str.tostring(v30) + '\n' : scr_label
+scr_label := s31 ? scr_label + syminfo.ticker(u31) + ' ' + str.tostring(v31) + '\n' : scr_label
+scr_label := s32 ? scr_label + syminfo.ticker(u32) + ' ' + str.tostring(v32) + '\n' : scr_label
+scr_label := s33 ? scr_label + syminfo.ticker(u33) + ' ' + str.tostring(v33) + '\n' : scr_label
+scr_label := s34 ? scr_label + syminfo.ticker(u34) + ' ' + str.tostring(v34) + '\n' : scr_label
+scr_label := s35 ? scr_label + syminfo.ticker(u35) + ' ' + str.tostring(v35) + '\n' : scr_label
+scr_label := s36 ? scr_label + syminfo.ticker(u36) + ' ' + str.tostring(v36) + '\n' : scr_label
+scr_label := s37 ? scr_label + syminfo.ticker(u37) + ' ' + str.tostring(v37) + '\n' : scr_label
+scr_label := s38 ? scr_label + syminfo.ticker(u38) + ' ' + str.tostring(v38) + '\n' : scr_label
+scr_label := s39 ? scr_label + syminfo.ticker(u39) + ' ' + str.tostring(v39) + '\n' : scr_label
+scr_label := s40 ? scr_label + syminfo.ticker(u40) + ' ' + str.tostring(v40) + '\n' : scr_label
+scr_label := s41 ? scr_label + syminfo.ticker(u41) + ' ' + str.tostring(v41) + '\n' : scr_label
+scr_label := s42 ? scr_label + syminfo.ticker(u42) + ' ' + str.tostring(v42) + '\n' : scr_label
+scr_label := s43 ? scr_label + syminfo.ticker(u43) + ' ' + str.tostring(v43) + '\n' : scr_label
+scr_label := s44 ? scr_label + syminfo.ticker(u44) + ' ' + str.tostring(v44) + '\n' : scr_label
+scr_label := s45 ? scr_label + syminfo.ticker(u45) + ' ' + str.tostring(v45) + '\n' : scr_label
+scr_label := s46 ? scr_label + syminfo.ticker(u46) + ' ' + str.tostring(v46) + '\n' : scr_label
+scr_label := s47 ? scr_label + syminfo.ticker(u47) + ' ' + str.tostring(v47) + '\n' : scr_label
+scr_label := s48 ? scr_label + syminfo.ticker(u48) + ' ' + str.tostring(v48) + '\n' : scr_label
+scr_label := s49 ? scr_label + syminfo.ticker(u49) + ' ' + str.tostring(v49) + '\n' : scr_label
+scr_label := s50 ? scr_label + syminfo.ticker(u50) + ' ' + str.tostring(v50) + '\n' : scr_label
+scr_label := s51 ? scr_label + syminfo.ticker(u51) + ' ' + str.tostring(v51) + '\n' : scr_label
+scr_label := s52 ? scr_label + syminfo.ticker(u52) + ' ' + str.tostring(v52) + '\n' : scr_label
+scr_label := s53 ? scr_label + syminfo.ticker(u53) + ' ' + str.tostring(v53) + '\n' : scr_label
+scr_label := s54 ? scr_label + syminfo.ticker(u54) + ' ' + str.tostring(v54) + '\n' : scr_label
+scr_label := s55 ? scr_label + syminfo.ticker(u55) + ' ' + str.tostring(v55) + '\n' : scr_label
+scr_label := s56 ? scr_label + syminfo.ticker(u56) + ' ' + str.tostring(v56) + '\n' : scr_label
+scr_label := s57 ? scr_label + syminfo.ticker(u57) + ' ' + str.tostring(v57) + '\n' : scr_label
+scr_label := s58 ? scr_label + syminfo.ticker(u58) + ' ' + str.tostring(v58) + '\n' : scr_label
+scr_label := s59 ? scr_label + syminfo.ticker(u59) + ' ' + str.tostring(v59) + '\n' : scr_label
+scr_label := s60 ? scr_label + syminfo.ticker(u60) + ' ' + str.tostring(v60) + '\n' : scr_label
+scr_label := s61 ? scr_label + syminfo.ticker(u61) + ' ' + str.tostring(v61) + '\n' : scr_label
+scr_label := s62 ? scr_label + syminfo.ticker(u62) + ' ' + str.tostring(v62) + '\n' : scr_label
+scr_label := s63 ? scr_label + syminfo.ticker(u63) + ' ' + str.tostring(v63) + '\n' : scr_label
+scr_label := s64 ? scr_label + syminfo.ticker(u64) + ' ' + str.tostring(v64) + '\n' : scr_label
+scr_label := s65 ? scr_label + syminfo.ticker(u65) + ' ' + str.tostring(v65) + '\n' : scr_label
+scr_label := s66 ? scr_label + syminfo.ticker(u66) + ' ' + str.tostring(v66) + '\n' : scr_label
+scr_label := s67 ? scr_label + syminfo.ticker(u67) + ' ' + str.tostring(v67) + '\n' : scr_label
+scr_label := s68 ? scr_label + syminfo.ticker(u68) + ' ' + str.tostring(v68) + '\n' : scr_label
+scr_label := s69 ? scr_label + syminfo.ticker(u69) + ' ' + str.tostring(v69) + '\n' : scr_label
+scr_label := s70 ? scr_label + syminfo.ticker(u70) + ' ' + str.tostring(v70) + '\n' : scr_label
+scr_label := s71 ? scr_label + syminfo.ticker(u71) + ' ' + str.tostring(v71) + '\n' : scr_label
+scr_label := s72 ? scr_label + syminfo.ticker(u72) + ' ' + str.tostring(v72) + '\n' : scr_label
+scr_label := s73 ? scr_label + syminfo.ticker(u73) + ' ' + str.tostring(v73) + '\n' : scr_label
+scr_label := s74 ? scr_label + syminfo.ticker(u74) + ' ' + str.tostring(v74) + '\n' : scr_label
+scr_label := s75 ? scr_label + syminfo.ticker(u75) + ' ' + str.tostring(v75) + '\n' : scr_label
+scr_label := s76 ? scr_label + syminfo.ticker(u76) + ' ' + str.tostring(v76) + '\n' : scr_label
+scr_label := s77 ? scr_label + syminfo.ticker(u77) + ' ' + str.tostring(v77) + '\n' : scr_label
+scr_label := s78 ? scr_label + syminfo.ticker(u78) + ' ' + str.tostring(v78) + '\n' : scr_label
+scr_label := s79 ? scr_label + syminfo.ticker(u79) + ' ' + str.tostring(v79) + '\n' : scr_label
+scr_label := s80 ? scr_label + syminfo.ticker(u80) + ' ' + str.tostring(v80) + '\n' : scr_label
+scr_label := s81 ? scr_label + syminfo.ticker(u81) + ' ' + str.tostring(v81) + '\n' : scr_label
+scr_label := s82 ? scr_label + syminfo.ticker(u82) + ' ' + str.tostring(v82) + '\n' : scr_label
+scr_label := s83 ? scr_label + syminfo.ticker(u83) + ' ' + str.tostring(v83) + '\n' : scr_label
+scr_label := s84 ? scr_label + syminfo.ticker(u84) + ' ' + str.tostring(v84) + '\n' : scr_label
+scr_label := s85 ? scr_label + syminfo.ticker(u85) + ' ' + str.tostring(v85) + '\n' : scr_label
+scr_label := s86 ? scr_label + syminfo.ticker(u86) + ' ' + str.tostring(v86) + '\n' : scr_label
+scr_label := s87 ? scr_label + syminfo.ticker(u87) + ' ' + str.tostring(v87) + '\n' : scr_label
+scr_label := s88 ? scr_label + syminfo.ticker(u88) + ' ' + str.tostring(v88) + '\n' : scr_label
+scr_label := s89 ? scr_label + syminfo.ticker(u89) + ' ' + str.tostring(v89) + '\n' : scr_label
+scr_label := s90 ? scr_label + syminfo.ticker(u90) + ' ' + str.tostring(v90) + '\n' : scr_label
+scr_label := s91 ? scr_label + syminfo.ticker(u91) + ' ' + str.tostring(v91) + '\n' : scr_label
+scr_label := s92 ? scr_label + syminfo.ticker(u92) + ' ' + str.tostring(v92) + '\n' : scr_label
+scr_label := s93 ? scr_label + syminfo.ticker(u93) + ' ' + str.tostring(v93) + '\n' : scr_label
+scr_label := s94 ? scr_label + syminfo.ticker(u94) + ' ' + str.tostring(v94) + '\n' : scr_label
+scr_label := s95 ? scr_label + syminfo.ticker(u95) + ' ' + str.tostring(v95) + '\n' : scr_label
+scr_label := s96 ? scr_label + syminfo.ticker(u96) + ' ' + str.tostring(v96) + '\n' : scr_label
+scr_label := s97 ? scr_label + syminfo.ticker(u97) + ' ' + str.tostring(v97) + '\n' : scr_label
+scr_label := s98 ? scr_label + syminfo.ticker(u98) + ' ' + str.tostring(v98) + '\n' : scr_label
+scr_label := s99 ? scr_label + syminfo.ticker(u99) + ' ' + str.tostring(v99) + '\n' : scr_label
+scr_label := s100 ? scr_label + syminfo.ticker(u100) + ' ' + str.tostring(v100) + '\n' : scr_label
+scr_label := s101 ? scr_label + syminfo.ticker(u101) + ' ' + str.tostring(v101) + '\n' : scr_label
+scr_label := s102 ? scr_label + syminfo.ticker(u102) + ' ' + str.tostring(v102) + '\n' : scr_label
+scr_label := s103 ? scr_label + syminfo.ticker(u103) + ' ' + str.tostring(v103) + '\n' : scr_label
+scr_label := s104 ? scr_label + syminfo.ticker(u104) + ' ' + str.tostring(v104) + '\n' : scr_label
+scr_label := s105 ? scr_label + syminfo.ticker(u105) + ' ' + str.tostring(v105) + '\n' : scr_label
+scr_label := s106 ? scr_label + syminfo.ticker(u106) + ' ' + str.tostring(v106) + '\n' : scr_label
+scr_label := s107 ? scr_label + syminfo.ticker(u107) + ' ' + str.tostring(v107) + '\n' : scr_label
+scr_label := s108 ? scr_label + syminfo.ticker(u108) + ' ' + str.tostring(v108) + '\n' : scr_label
+scr_label := s109 ? scr_label + syminfo.ticker(u109) + ' ' + str.tostring(v109) + '\n' : scr_label
+scr_label := s110 ? scr_label + syminfo.ticker(u110) + ' ' + str.tostring(v110) + '\n' : scr_label
+scr_label := s111 ? scr_label + syminfo.ticker(u111) + ' ' + str.tostring(v111) + '\n' : scr_label
+scr_label := s112 ? scr_label + syminfo.ticker(u112) + ' ' + str.tostring(v112) + '\n' : scr_label
+scr_label := s113 ? scr_label + syminfo.ticker(u113) + ' ' + str.tostring(v113) + '\n' : scr_label
+scr_label := s114 ? scr_label + syminfo.ticker(u114) + ' ' + str.tostring(v114) + '\n' : scr_label
+scr_label := s115 ? scr_label + syminfo.ticker(u115) + ' ' + str.tostring(v115) + '\n' : scr_label
+scr_label := s116 ? scr_label + syminfo.ticker(u116) + ' ' + str.tostring(v116) + '\n' : scr_label
+scr_label := s117 ? scr_label + syminfo.ticker(u117) + ' ' + str.tostring(v117) + '\n' : scr_label
+scr_label := s118 ? scr_label + syminfo.ticker(u118) + ' ' + str.tostring(v118) + '\n' : scr_label
+scr_label := s119 ? scr_label + syminfo.ticker(u119) + ' ' + str.tostring(v119) + '\n' : scr_label
+scr_label := s120 ? scr_label + syminfo.ticker(u120) + ' ' + str.tostring(v120) + '\n' : scr_label
+scr_label := s121 ? scr_label + syminfo.ticker(u121) + ' ' + str.tostring(v121) + '\n' : scr_label
+scr_label := s122 ? scr_label + syminfo.ticker(u122) + ' ' + str.tostring(v122) + '\n' : scr_label
+scr_label := s123 ? scr_label + syminfo.ticker(u123) + ' ' + str.tostring(v123) + '\n' : scr_label
+scr_label := s124 ? scr_label + syminfo.ticker(u124) + ' ' + str.tostring(v124) + '\n' : scr_label
+scr_label := s125 ? scr_label + syminfo.ticker(u125) + ' ' + str.tostring(v125) + '\n' : scr_label
+scr_label := s126 ? scr_label + syminfo.ticker(u126) + ' ' + str.tostring(v126) + '\n' : scr_label
+scr_label := s127 ? scr_label + syminfo.ticker(u127) + ' ' + str.tostring(v127) + '\n' : scr_label
+scr_label := s128 ? scr_label + syminfo.ticker(u128) + ' ' + str.tostring(v128) + '\n' : scr_label
+scr_label := s129 ? scr_label + syminfo.ticker(u129) + ' ' + str.tostring(v129) + '\n' : scr_label
+scr_label := s130 ? scr_label + syminfo.ticker(u130) + ' ' + str.tostring(v130) + '\n' : scr_label
+scr_label := s131 ? scr_label + syminfo.ticker(u131) + ' ' + str.tostring(v131) + '\n' : scr_label
+scr_label := s132 ? scr_label + syminfo.ticker(u132) + ' ' + str.tostring(v132) + '\n' : scr_label
+scr_label := s133 ? scr_label + syminfo.ticker(u133) + ' ' + str.tostring(v133) + '\n' : scr_label
+scr_label := s134 ? scr_label + syminfo.ticker(u134) + ' ' + str.tostring(v134) + '\n' : scr_label
+scr_label := s135 ? scr_label + syminfo.ticker(u135) + ' ' + str.tostring(v135) + '\n' : scr_label
+scr_label := s136 ? scr_label + syminfo.ticker(u136) + ' ' + str.tostring(v136) + '\n' : scr_label
+scr_label := s137 ? scr_label + syminfo.ticker(u137) + ' ' + str.tostring(v137) + '\n' : scr_label
+scr_label := s138 ? scr_label + syminfo.ticker(u138) + ' ' + str.tostring(v138) + '\n' : scr_label
+scr_label := s139 ? scr_label + syminfo.ticker(u139) + ' ' + str.tostring(v139) + '\n' : scr_label
+scr_label := s140 ? scr_label + syminfo.ticker(u140) + ' ' + str.tostring(v140) + '\n' : scr_label
+scr_label := s141 ? scr_label + syminfo.ticker(u141) + ' ' + str.tostring(v141) + '\n' : scr_label
+scr_label := s142 ? scr_label + syminfo.ticker(u142) + ' ' + str.tostring(v142) + '\n' : scr_label
+scr_label := s143 ? scr_label + syminfo.ticker(u143) + ' ' + str.tostring(v143) + '\n' : scr_label
+scr_label := s144 ? scr_label + syminfo.ticker(u144) + ' ' + str.tostring(v144) + '\n' : scr_label
+scr_label := s145 ? scr_label + syminfo.ticker(u145) + ' ' + str.tostring(v145) + '\n' : scr_label
+scr_label := s146 ? scr_label + syminfo.ticker(u146) + ' ' + str.tostring(v146) + '\n' : scr_label
+scr_label := s147 ? scr_label + syminfo.ticker(u147) + ' ' + str.tostring(v147) + '\n' : scr_label
+scr_label := s148 ? scr_label + syminfo.ticker(u148) + ' ' + str.tostring(v148) + '\n' : scr_label
+scr_label := s149 ? scr_label + syminfo.ticker(u149) + ' ' + str.tostring(v149) + '\n' : scr_label
+scr_label := s150 ? scr_label + syminfo.ticker(u150) + ' ' + str.tostring(v150) + '\n' : scr_label
+
+loc = input.int(defval=10, title='Konum Ayarı', minval = -100,maxval = 100 , step = 10,  group='Tablonun konumunu belirler')
+lab_1 = label.new(bar_index + loc, close, scr_label, color=color.green, textcolor=color.white, style=label.style_label_upper_left,size=size.small)
+label.delete(lab_1[1])
+
+if str.length(scr_label) > 8
+    alert(scr_label,alert.freq_once_per_bar_close)
